@@ -10,6 +10,8 @@ class ChuckNorrisScreen extends StatefulWidget {
 }
 
 class _ChuckNorrisScreenState extends State<ChuckNorrisScreen> {
+  List<CnJoke> jokes = [];
+
   // Load to-do list from the server
   Future<CnJoke> _loadJoke() async {
     var url = Uri.https('api.chucknorris.io', '/jokes/random');
@@ -17,7 +19,10 @@ class _ChuckNorrisScreenState extends State<ChuckNorrisScreen> {
 
     if (response.statusCode == 200) {
       print(response.body);
-      return (cnJokeFromJson(response.body));
+
+      var joke = cnJokeFromJson(response.body);
+      jokes.insert(0, joke);
+      return (joke);
     } else {
       return CnJoke();
     }
@@ -41,13 +46,20 @@ class _ChuckNorrisScreenState extends State<ChuckNorrisScreen> {
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return _buildListView(snapshot);
-                  //return _doit();
                 } else if (snapshot.hasError) {
                   return Text('${snapshot.error}');
                 }
                 return CircularProgressIndicator();
               },
             ),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  jokes = [];
+                });
+              },
+              child: Text("clear"),
+            )
           ],
         ),
       ),
@@ -61,13 +73,13 @@ class _ChuckNorrisScreenState extends State<ChuckNorrisScreen> {
           setState(() {});
         },
         child: ListView.builder(
-          itemCount: 1,
+          itemCount: jokes.length,
           itemBuilder: (context, index) {
-            final joke = snapshot.data!;
+            final joke = jokes[index];
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: ListTile(
-                title: Text("${index}: ${joke.value}"),
+                title: Text("${joke.value}"),
               ),
             );
           },
