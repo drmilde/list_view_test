@@ -35,7 +35,7 @@ class _ChuckNorrisScreenState extends State<ChuckNorrisScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chuck Norris Joke'),
+        title: Text('Chuck Norris Jokes'),
       ),
       body: Center(
         child: Column(
