@@ -33,34 +33,56 @@ class _ChuckNorrisScreenState extends State<ChuckNorrisScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Chuck Norris Jokes'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            FutureBuilder<CnJoke>(
-              future: _loadJoke(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return _buildListView(snapshot);
-                } else if (snapshot.hasError) {
-                  return Text('${snapshot.error}');
-                }
-                return CircularProgressIndicator();
-              },
-            ),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  jokes = [];
-                });
-              },
-              child: Text("clear"),
-            )
-          ],
+    return SafeArea(
+      child: Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                height: 200,
+                decoration: BoxDecoration (
+                  borderRadius: BorderRadius.only(
+                    bottomRight: Radius.circular(20),
+                    bottomLeft: Radius.circular(20),
+                  ),
+                  image: DecorationImage(
+                    image: NetworkImage("https://i.ytimg.com/vi/ifJctID1zUc/maxresdefault.jpg")
+                        ,
+                    fit: BoxFit.cover,
+                  )
+                ),
+              ),
+              SizedBox(
+                height: 16,
+              ),
+              FutureBuilder<CnJoke>(
+                future: _loadJoke(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return _buildListView(snapshot);
+                  } else if (snapshot.hasError) {
+                    return Text('${snapshot.error}');
+                  }
+                  return CircularProgressIndicator();
+                },
+              ),
+              SizedBox(
+                height: 16,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    jokes = [];
+                  });
+                },
+                child: Text("clear"),
+              ),
+              SizedBox(
+                height: 16,
+              ),
+            ],
+          ),
         ),
       ),
     );
