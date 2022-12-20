@@ -10,7 +10,6 @@ class ChuckNorrisScreen extends StatefulWidget {
 }
 
 class _ChuckNorrisScreenState extends State<ChuckNorrisScreen> {
-
   // Load to-do list from the server
   Future<CnJoke> _loadJoke() async {
     var url = Uri.https('api.chucknorris.io', '/jokes/random');
@@ -23,6 +22,7 @@ class _ChuckNorrisScreenState extends State<ChuckNorrisScreen> {
       return CnJoke();
     }
   }
+
   // https://api.chucknorris.io/jokes/random
   // https://github.com/drmilde/list_view_test
 
@@ -56,17 +56,22 @@ class _ChuckNorrisScreenState extends State<ChuckNorrisScreen> {
 
   Widget _buildListView(AsyncSnapshot<CnJoke> snapshot) {
     return Expanded(
-      child: ListView.builder(
-        itemCount: 1,
-        itemBuilder: (context, index) {
-          final joke = snapshot.data!;
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ListTile(
-              title: Text("${index}: ${joke.value}"),
-            ),
-          );
+      child: RefreshIndicator(
+        onRefresh: () async {
+          setState(() {});
         },
+        child: ListView.builder(
+          itemCount: 1,
+          itemBuilder: (context, index) {
+            final joke = snapshot.data!;
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ListTile(
+                title: Text("${index}: ${joke.value}"),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
