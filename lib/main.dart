@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:list_view_test/screens/chuck_norris_screen.dart';
 
 import 'screens/future_builder_screen.dart';
 
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: FutureBuilderScreen(),
+      home: ChuckNorrisScreen(),
     );
   }
 }

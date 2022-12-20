@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../model/entry.dart';
+import 'package:list_view_test/model/chuck_norris_joke.dart';
 
-class FutureBuilderScreen extends StatefulWidget {
-  const FutureBuilderScreen({Key? key}) : super(key: key);
+class ChuckNorrisScreen extends StatefulWidget {
+  const ChuckNorrisScreen({Key? key}) : super(key: key);
 
   @override
-  _FutureBuilderScreenState createState() => _FutureBuilderScreenState();
+  _ChuckNorrisScreenState createState() => _ChuckNorrisScreenState();
 }
 
-class _FutureBuilderScreenState extends State<FutureBuilderScreen> {
+class _ChuckNorrisScreenState extends State<ChuckNorrisScreen> {
 
   // Load to-do list from the server
-  Future<List<Entry>> _loadEntryList() async {
-    var url = Uri.https('jsonplaceholder.typicode.com', '/posts');
+  Future<CnJoke> _loadJoke() async {
+    var url = Uri.https('api.chucknorris.io', '/jokes/random');
     var response = await http.get(url);
 
     if (response.statusCode == 200) {
       print(response.body);
-      return (entryFromJson(response.body));
+      return (cnJokeFromJson(response.body));
     } else {
-      return [];
+      return CnJoke();
     }
   }
   // https://api.chucknorris.io/jokes/random
@@ -30,14 +30,14 @@ class _FutureBuilderScreenState extends State<FutureBuilderScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Entry List'),
+        title: Text('Chuck Norris Joke'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            FutureBuilder<List<Entry>>(
-              future: _loadEntryList(),
+            FutureBuilder<CnJoke>(
+              future: _loadJoke(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return _buildListView(snapshot);
@@ -54,16 +54,16 @@ class _FutureBuilderScreenState extends State<FutureBuilderScreen> {
     );
   }
 
-  Widget _buildListView(AsyncSnapshot<List<Entry>> snapshot) {
+  Widget _buildListView(AsyncSnapshot<CnJoke> snapshot) {
     return Expanded(
       child: ListView.builder(
-        itemCount: snapshot.data!.length,
+        itemCount: 1,
         itemBuilder: (context, index) {
-          final entry = snapshot.data![index];
+          final joke = snapshot.data!;
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: ListTile(
-              title: Text("${index}: ${entry.body}"),
+              title: Text("${index}: ${joke.value}"),
             ),
           );
         },
