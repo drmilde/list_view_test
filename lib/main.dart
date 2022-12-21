@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:list_view_test/screens/chuck_norris_screen.dart';
-
-import 'screens/future_builder_screen.dart';
+import 'package:list_view_test/screens/department_list_screen.dart';
+import 'package:list_view_test/screens/user_list_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: ChuckNorrisScreen(),
+      home: UserListScreen(),
     );
   }
 }
