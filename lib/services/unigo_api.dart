@@ -5,27 +5,13 @@ import 'package:list_view_test/model/department_entry.dart';
 import 'package:list_view_test/model/department_list.dart';
 import 'package:list_view_test/model/user_entry.dart';
 import 'package:list_view_test/model/user_list.dart';
+import 'package:list_view_test/services/uni_go_exceptions.dart';
 
 class UniGoAPI {
   static String host = "10.0.2.2:8000";
   static final queryParameters = {
     'format': 'json',
   };
-
-  static Future<List<UserEntry>> getUserList() async {
-    final queryParameters = {
-      'format': 'json',
-    };
-    var url = Uri.http(host, '/users/', queryParameters);
-    var response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      var data = userListFromJson(response.body).data;
-      return (data!);
-    } else {
-      return [];
-    }
-  }
 
   static Future<List<DepartmentEntry>> getDepartmentsList() async {
     final queryParameters = {
@@ -51,33 +37,41 @@ class UniGoAPI {
         return (data![0]);
       }
     }
-    return null!;
+    throw ObjectNotFoundException();
   }
 
-  static Future<bool> createUser(String first_name) async {
+/* User */
 
-    int firstDepartmentID = 0;
-    DepartmentEntry firstDepartment = await getFirstDepartment();
-    if (firstDepartment != null) {
-      firstDepartmentID = firstDepartment.id!;
+  static Future<List<UserEntry>> getUserList() async {
+    final queryParameters = {
+      'format': 'json',
+    };
+    var url = Uri.http(host, '/users/', queryParameters);
+    var response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      var data = userListFromJson(response.body).data;
+      return (data!);
     } else {
+      return [];
+    }
+  }
+
+  static Future<bool> createUser() async {
+    int firstDepartmentID = 0;
+    try {
+      DepartmentEntry firstDepartment = await getFirstDepartment();
+      firstDepartmentID = firstDepartment.id!;
+    } catch (e) {
       return false;
     }
 
     var url = Uri.http(host, '/users/');
     UserEntry entry = UserEntry(
-      firstName: first_name,
-      lastName: "lastName",
-      displayName: "displayName",
-      age: 42,
-      department: 3,
-      password: "secret",
-      preferences: [1],
-      id: firstDepartmentID,
+      department: firstDepartmentID,
     );
 
     String json = userEntryToJson(entry);
-    print(json);
     http.Response resonse = await http.post(
       url,
       headers: <String, String>{
@@ -90,4 +84,36 @@ class UniGoAPI {
     }
     return false;
   }
+
+  static Future<UserEntry> getUserById(int id) async {
+    final queryParameters = {
+      'format': 'json',
+    };
+    var url = Uri.http(host, '/users/${id}', queryParameters);
+    var response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      var answer = json.decode(response.body);
+      var entry = userEntryFromJson(jsonEncode(answer['data']));
+      return (entry);
+    }
+    // sonst ein Fehler
+    throw new ObjectNotFoundException();
+  }
+
+
+  static Future<bool> deleteUserById(int id) async {
+    final queryParameters = {
+      'format': 'json',
+    };
+    var url = Uri.http(host, '/users/${id}', queryParameters);
+    var response = await http.delete(url);
+
+    if (response.statusCode == 204) {
+      return (true);
+    }
+    // sonst ein Fehler
+    throw new ObjectNotFoundException();
+  }
+
 }

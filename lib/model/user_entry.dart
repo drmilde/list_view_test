@@ -10,14 +10,14 @@ String userEntryToJson(UserEntry data) => json.encode(data.toJson());
 
 class UserEntry {
   UserEntry({
-    this.id,
-    this.firstName,
-    this.lastName,
-    this.displayName,
-    this.password,
-    this.age,
-    this.department,
-    this.preferences,
+    this.id = 0,
+    this.firstName = "firstName",
+    this.lastName = "lastName",
+    this.displayName = "displayName",
+    this.password = "password",
+    this.age = 42,
+    this.department = 0,
+    this.preferences = const [],
   });
 
   int? id;

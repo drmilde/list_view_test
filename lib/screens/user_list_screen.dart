@@ -1,6 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:list_view_test/model/user_list.dart';
+import 'package:list_view_test/screens/user_entry_detail.dart';
 import 'package:list_view_test/services/unigo_api.dart';
 
 import '../model/user_entry.dart';
@@ -13,10 +14,17 @@ class UserListScreen extends StatefulWidget {
 }
 
 class _UserListScreenState extends State<UserListScreen> {
-  //List<UserEntry> jokes = [];
+  List<UserEntry> entryList = [];
 
   // https://api.UserList.io/jokes/random
   // https://github.com/drmilde/list_view_test
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    entryList = [];
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,13 +37,13 @@ class _UserListScreenState extends State<UserListScreen> {
               Container(
                 height: 200,
                 decoration: BoxDecoration(
+                    color: Color.fromARGB(255, 128, 128, 128),
                     borderRadius: BorderRadius.only(
                       bottomRight: Radius.circular(20),
                       bottomLeft: Radius.circular(20),
                     ),
                     image: DecorationImage(
-                      image: NetworkImage(
-                          "https://store-images.s-microsoft.com/image/apps.25871.53baf1fd-a88b-421e-96ea-18e584d3df32.2263e8ca-1f9f-4991-8937-d1c42f79ccc3.2fed0e10-4552-446e-b131-5cabd645b924.png"),
+                      image: AssetImage("assets/user_list.png"),
                       fit: BoxFit.cover,
                     )),
               ),
@@ -56,28 +64,35 @@ class _UserListScreenState extends State<UserListScreen> {
               SizedBox(
                 height: 16,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton(
-                    onPressed: () async {
-                      bool result = await UniGoAPI.createUser("NEUNEUNEU");
-                      setState(() {});
-                    },
-                    child: Text("add"),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        //jokes = [];
-                      });
-                    },
-                    child: Text("clear"),
-                  ),
-                ],
+              Container(
+                color: Colors.green,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () async {
+                        bool result = await UniGoAPI.createUser();
+                        setState(() {});
+                      },
+                      child: Text("add"),
+                    ),
+                    ElevatedButton(
+                      onPressed: ()  {
+                        setState(() {
+                          entryList = [];
+                        });
+                      },
+                      child: Text("reload"),
+                    ),
+                  ],
+                ),
               ),
-              SizedBox(
-                height: 16,
+              Container(
+                color: Color.fromARGB(255, 128, 128, 128),
+                child: SizedBox(
+                  height: 16,
+                  width: double.infinity,
+                ),
               ),
             ],
           ),
@@ -87,24 +102,64 @@ class _UserListScreenState extends State<UserListScreen> {
   }
 
   Widget _buildListView(AsyncSnapshot<List<UserEntry>> snapshot) {
+    Random rand = Random(10000000);
+    entryList = snapshot.data!;
     return Expanded(
       child: RefreshIndicator(
         onRefresh: () async {
-          setState(() {});
+          setState(() {
+            entryList = [];
+          });
         },
         child: ListView.builder(
-          itemCount: snapshot.data!.length,
+          itemCount: entryList.length,
           itemBuilder: (context, index) {
-            final user = snapshot.data![index];
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ListTile(
-                tileColor: Color.fromARGB(255, 241, 188, 229),
-                title: Text(
-                    "${user.displayName} is ${user.firstName} ${user.lastName}"),
+            final user = entryList[index];
+            return Dismissible(
+              key: ValueKey<int>(user.id!),
+              background: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  color: Colors.red,
+                ),
               ),
+              onDismissed: (DismissDirection direction) async {
+                //if (direction == DismissDirection.startToEnd) {
+                try {
+                  await UniGoAPI.deleteUserById(user.id!);
+                } catch(e) {
+
+                }
+                setState(() {
+                  entryList.removeAt(index);
+                  // aktualisieren
+                });
+                //}
+              },
+              child: _buildTile(context, user),
             );
           },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTile(BuildContext context, UserEntry user) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => UserEntryDetailScreen(id: user.id!),
+          ),
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ListTile(
+          tileColor: Color.fromARGB(255, 241, 188, 229),
+          title:
+              Text("${user.displayName} is ${user.firstName} ${user.lastName}"),
         ),
       ),
     );
