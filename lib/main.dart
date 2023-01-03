@@ -1,9 +1,19 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:list_view_test/screens/department_list_screen.dart';
-import 'package:list_view_test/screens/user_list_screen.dart';
+import 'package:list_view_test/screens/einkaufs_liste_screen.dart';
 
 void main() {
   runApp(const MyApp());
+}
+
+class MyCustomScrollBehavior extends MaterialScrollBehavior {
+  // Override behavior methods and getters like dragDevices
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+        // etc.
+      };
 }
 
 class MyApp extends StatelessWidget {
@@ -12,14 +22,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      scrollBehavior: MyCustomScrollBehavior(),
+      title: 'Einkaufsliste',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: UserListScreen(),
+      home: EinkaufsListeScreen(),
+      //home: HomeScreen(),
     );
   }
 }
-
-
