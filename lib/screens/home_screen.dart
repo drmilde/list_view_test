@@ -17,7 +17,7 @@ class HomeScreen extends StatelessWidget {
           children: [
             ElevatedButton(
               onPressed: () {
-                productController.addEinkausliste(Item(name:"KLASSE"));
+                productController.addToEinkaufsliste(Item(name:"KLASSE"));
               },
               child: Text("add"),
             ),

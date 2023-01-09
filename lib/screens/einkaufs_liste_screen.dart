@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:list_view_test/widgets/einkaufs_liste_widget.dart';
+import 'package:get/get.dart';
+import 'package:list_view_test/controller/product_controller.dart';
 import 'package:list_view_test/widgets/getx_artikel_liste_widget.dart';
 import 'package:list_view_test/widgets/getx_einkaufs_liste_widget.dart';
-import 'package:list_view_test/widgets/info_widget.dart';
-import 'package:list_view_test/widgets/money_widget.dart';
+import 'package:list_view_test/widgets/meine_listen_widget.dart';
+import 'package:list_view_test/widgets/profil_widget.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-
-import '../widgets/artikel_liste_widget.dart';
 
 class EinkaufsListeScreen extends StatefulWidget {
   const EinkaufsListeScreen({Key? key}) : super(key: key);
@@ -16,15 +15,30 @@ class EinkaufsListeScreen extends StatefulWidget {
 }
 
 class _EinkaufsListeScreenState extends State<EinkaufsListeScreen> {
+  ProductController productController = Get.put(ProductController());
+
   int selected = 0;
 
-  List<Widget> widgets = [
-    //EinkaufsListeWidget(),
-    GetXEinkaufsListeWidget(),
-    GetXArtikelListeWidget(),
-    InfoWidget(),
-    MoneyWidget(),
-  ];
+  GetXEinkaufsListeWidget einkaufsListeWidget = GetXEinkaufsListeWidget();
+  GetXArtikelListeWidget getXArtikelListeWidget = GetXArtikelListeWidget();
+  MeineListenWidget meineListenWidget = MeineListenWidget();
+  ProfilWidget profilWidget = ProfilWidget();
+
+  List<Widget> widgets = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    widgets = [
+      //EinkaufsListeWidget(),
+      einkaufsListeWidget,
+      getXArtikelListeWidget,
+      meineListenWidget,
+      profilWidget,
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +47,19 @@ class _EinkaufsListeScreenState extends State<EinkaufsListeScreen> {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            _createModelSheet(context);
+            switch (selected) {
+              case 0: // Aktuelle Einkaufsliste
+                einkaufsListeWidget.showModalSheet(context);
+                break;
+              case 1: // Artikelliste
+                getXArtikelListeWidget.showModalSheet(context);
+                break;
+              case 2: // Meine Listen
+                productController.addEinkaufsliste("Weitere");
+                break;
+              case 3: // Profil
+                break;
+            }
           },
           child: Text(
             "+",
@@ -57,7 +83,7 @@ class _EinkaufsListeScreenState extends State<EinkaufsListeScreen> {
           items: [
             BottomNavigationBarItem(
               icon: Icon(Icons.receipt_long_outlined),
-              label: "Einkaufsliste",
+              label: "Zettel",
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.receipt_outlined),
@@ -65,81 +91,15 @@ class _EinkaufsListeScreenState extends State<EinkaufsListeScreen> {
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.info_outline),
-              label: "Übersicht",
+              label: "Meine Listen",
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.euro),
-              label: "Money",
+              icon: Icon(Icons.settings_outlined),
+              label: "Einstellungen",
             ),
           ],
         ),
         body: widgets[selected],
-      ),
-    );
-  }
-
-  void _createModelSheet(BuildContext context) {
-    //showCupertinoModalBottomSheet (
-    showMaterialModalBottomSheet(
-      backgroundColor: Colors.transparent,
-      duration: Duration(milliseconds: 500),
-      context: context,
-      builder: (context) => SingleChildScrollView(
-        controller: ModalScrollController.of(context),
-        child: _createModalContent(),
-        //child: GetXArtikelListeWidget(),
-      ),
-    );
-  }
-
-  Widget _createModalContent() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Color.fromARGB(255, 153, 157, 153),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-            bottomLeft: Radius.circular(20),
-            bottomRight: Radius.circular(20),
-          ),
-        ),
-        height: 500,
-        //child: _modalContent(),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16),
-          child: GetXArtikelListeWidget(),
-        ),
-      ),
-    );
-  }
-
-  Widget _modalContent() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildEntry(),
-            _buildEntry(),
-            _buildEntry(),
-            _buildEntry(),
-            _buildEntry(),
-            _buildEntry(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEntry() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        color: Colors.lime,
-        width: double.infinity,
-        height: 100,
       ),
     );
   }

@@ -39,11 +39,11 @@ class _SearchWidgetState extends State<SearchWidget> {
       decoration: InputDecoration(
         focusedBorder: OutlineInputBorder(
           borderSide:
-              BorderSide(width: 1, color: Color.fromARGB(255, 57, 212, 57)),
+              BorderSide(width: 3, color: Color.fromARGB(255, 156, 183, 237)),
         ),
         enabledBorder: OutlineInputBorder(
           borderSide:
-              BorderSide(width: 1, color: Color.fromARGB(255, 57, 212, 57)),
+              BorderSide(width: 3, color: Color.fromARGB(255, 156, 183, 237)),
         ),
         border: OutlineInputBorder(),
         hintText: 'Artikelsuche',

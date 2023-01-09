@@ -145,7 +145,7 @@ class _ArtikelListeWidgetState extends State<ArtikelListeWidget> {
   void _addItem(int index) {
     SelectableItem sItem = liste[index];
     if (sItem.selected) {
-        productController.addEinkausliste(Item(name: sItem.item.name));
+        productController.addToEinkaufsliste(Item(name: sItem.item.name));
     } else {
       productController.removeItemFromEinkaufsliste(sItem.item.name);
     }

@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:list_view_test/controller/product_controller.dart';
+import 'package:list_view_test/widgets/header_widget.dart';
 
-import 'search_widget.dart';
+import 'getx_artikel_liste_widget.dart';
+import 'modal_bottom_widget.dart';
 
 class GetXEinkaufsListeWidget extends StatelessWidget {
-  ProductController productController = Get.put(ProductController());
+  ProductController productController = Get.find();
+  ModalBottomWidget modalBottomWidget = ModalBottomWidget(
+    child: GetXArtikelListeWidget(showHeader: false),
+  );
 
   GetXEinkaufsListeWidget({Key? key}) : super(key: key);
 
@@ -15,14 +20,39 @@ class GetXEinkaufsListeWidget extends StatelessWidget {
     return Obx(
       () {
         //int changed = productController.changed.value;
-
         return Column(
           children: [
             //_buildSlate(context),
             Expanded(
+              child: Column(
+                children: [
+                  HeaderWidget(
+                    title: "Aktuelle Liste",
+                    bgindex: 1,
+                    colorindex: 1,
+                  ),
+                  Expanded(
+                    child: Container(
+                      height: 300,
+                      decoration: BoxDecoration(
+                        gradient: productController.config.value.gradients[1],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: _buildSlate(context),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            /*
+            Expanded(
               flex: 10,
               child: _buildSlate(context),
             ),
+            */
           ],
         );
       },
@@ -31,51 +61,65 @@ class GetXEinkaufsListeWidget extends StatelessWidget {
 
   Container _buildSlate(BuildContext context) {
     return Container(
-      color: Color.fromARGB(255, 153, 157, 153),
-      child: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: Color.fromARGB(255, 105, 112, 105),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-            bottomLeft: Radius.circular(20),
-            bottomRight: Radius.circular(20),
-          ),
-          border: Border.all(
-            color: Color.fromARGB(255, 212, 173, 110),
-            width: 16.0,
-            style: BorderStyle.solid,
-          ),
-        ),
-        child: Column(
-          children: [
-            _buildHeader(),
-            Divider(
-              height: 5,
-              color: Color.fromARGB(255, 57, 212, 57),
-            ),
-            Expanded(
-              flex: 6,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                //child: Obx(() => _buildListView(context)),
-                child: _buildListView(context),
+      color: productController.config.value.colors[1],
+      child: Column(
+        children: [
+          //_buildHeader(),
+          Expanded(
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Color.fromARGB(255, 105, 112, 105),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                ),
+                border: Border.all(
+                  color: Color.fromARGB(255, 212, 173, 110),
+                  width: 16.0,
+                  style: BorderStyle.solid,
+                ),
+              ),
+              child: Column(
+                children: [
+                  Expanded(
+                    flex: 6,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      //child: Obx(() => _buildListView(context)),
+                      child: _buildListView(context),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildListView(BuildContext context) {
-    return ListView.builder(
+    return ReorderableListView.builder(
       itemCount: productController.einkaufsliste.length,
       itemBuilder: (context, index) {
         return Container(
+          key: Key("$index"),
           child: _buildLine(productController.einkaufsliste[index].name, index),
         );
+      },
+      buildDefaultDragHandles: true,
+      onReorder: (int oldIndex, int newIndex) {
+        /*
+        if (oldIndex < newIndex) {
+          newIndex -= 1;
+        }
+        final int item = _items.removeAt(oldIndex);
+        _items.insert(newIndex, item);
+
+         */
       },
     );
   }
@@ -108,7 +152,7 @@ class GetXEinkaufsListeWidget extends StatelessWidget {
   Widget _buildHeader() {
     return Container(
       color: Color.fromARGB(255, 105, 112, 105),
-      height: 48,
+      height: 90,
       child: Center(
         child: Text(
           "Einkaufsliste",
@@ -121,5 +165,9 @@ class GetXEinkaufsListeWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void showModalSheet(BuildContext context) {
+    modalBottomWidget.showModelSheet(context);
   }
 }
