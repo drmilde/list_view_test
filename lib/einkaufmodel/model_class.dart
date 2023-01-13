@@ -74,12 +74,16 @@ class Item implements Comparable<Item> {
 
 class Einkaufsliste {
   String name = "";
-  List<Item> artikel = [];
+  List<Item> artikel = List<Item>.empty(growable: true);
 
   Einkaufsliste({required this.name});
 
   void addItem(Item item) {
     artikel.add(item);
+  }
+
+  void insertItem(int index, Item item) {
+    artikel.insert(index, item);
   }
 
   void clear() {

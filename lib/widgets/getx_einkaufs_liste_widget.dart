@@ -19,7 +19,7 @@ class GetXEinkaufsListeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(
       () {
-        //int changed = productController.changed.value;
+        int changed = productController.changed.value;
         return Column(
           children: [
             //_buildSlate(context),

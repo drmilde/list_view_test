@@ -109,7 +109,6 @@ class _EinkaufsListeScreenState extends State<EinkaufsListeScreen> {
   }
 
   void changeSelectedWidget(int selected) {
-    print(selected);
     setState(() {
       this.selected = selected;
     });

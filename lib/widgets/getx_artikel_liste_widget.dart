@@ -31,7 +31,7 @@ class _GetXArtikelListeWidgetState extends State<GetXArtikelListeWidget> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    productController.sortArtikel();
+    productController.sortInventar();
   }
 
   @override
@@ -84,7 +84,7 @@ class _GetXArtikelListeWidgetState extends State<GetXArtikelListeWidget> {
   Widget _buildContent() {
     return (filter == "")
         ? ListView.builder(
-            itemCount: productController.artikelListe.length,
+            itemCount: productController.inventar.length,
             itemBuilder: (context, index) {
               return Container(
                 child: Padding(
@@ -96,10 +96,10 @@ class _GetXArtikelListeWidgetState extends State<GetXArtikelListeWidget> {
             },
           )
         : ListView.builder(
-            itemCount: productController.artikelListe.length,
+            itemCount: productController.inventar.length,
             itemBuilder: (context, index) {
               return Container(
-                child: checkFilter(index)
+                child: productController.inventar.checkFilter(index, filter)
                     ? Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16.0, vertical: 0),
@@ -110,15 +110,11 @@ class _GetXArtikelListeWidgetState extends State<GetXArtikelListeWidget> {
             });
   }
 
-  bool checkFilter(int index) {
-    return productController.artikelListe[index].search.contains(filter);
-  }
-
   Widget _buildArtikelRow(int index) {
     return GestureDetector(
       onTap: () {
         setState(() {
-          productController.artikelListe[index].toggleEinkaufswagen();
+          productController.inventar.toggleEinkaufswagen(index);
           _addItem(index);
         });
       },
@@ -129,16 +125,16 @@ class _GetXArtikelListeWidgetState extends State<GetXArtikelListeWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              productController.artikelListe[index].name,
+              productController.inventar.getNameAt(index),
               style: TextStyle(
                 fontSize: 24,
               ),
             ),
             Checkbox(
-                value: productController.artikelListe[index].imEinkaufswagen,
+                value: productController.inventar.imEinkaufswagenAt(index),
                 onChanged: (value) {
                   setState(() {
-                    productController.artikelListe[index].toggleEinkaufswagen();
+                    productController.inventar.toggleEinkaufswagen(index);
                     _addItem(index);
                     // TODO Logik einfügen
                   });
@@ -150,15 +146,13 @@ class _GetXArtikelListeWidgetState extends State<GetXArtikelListeWidget> {
   }
 
   void _addItem(int index) {
-    Item sItem = productController.artikelListe[index];
+    Item sItem = productController.inventar.getItemAt(index);
     if (sItem.imEinkaufswagen) {
-      productController.addEinkauslisteStart(Item(name: sItem.name));
+      productController.addEinkaufslisteStart(Item(name: sItem.name));
     } else {
       productController.removeItemFromEinkaufsliste(sItem.name);
     }
   }
-
-
 
   @override
   void dispose() {
