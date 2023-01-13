@@ -5,7 +5,6 @@ import 'package:list_view_test/widgets/getx_artikel_liste_widget.dart';
 import 'package:list_view_test/widgets/getx_einkaufs_liste_widget.dart';
 import 'package:list_view_test/widgets/meine_listen_widget.dart';
 import 'package:list_view_test/widgets/profil_widget.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class EinkaufsListeScreen extends StatefulWidget {
   const EinkaufsListeScreen({Key? key}) : super(key: key);
@@ -19,10 +18,10 @@ class _EinkaufsListeScreenState extends State<EinkaufsListeScreen> {
 
   int selected = 0;
 
-  GetXEinkaufsListeWidget einkaufsListeWidget = GetXEinkaufsListeWidget();
-  GetXArtikelListeWidget getXArtikelListeWidget = GetXArtikelListeWidget();
-  MeineListenWidget meineListenWidget = MeineListenWidget();
-  ProfilWidget profilWidget = ProfilWidget();
+  late GetXEinkaufsListeWidget einkaufsListeWidget;
+  late GetXArtikelListeWidget getXArtikelListeWidget;
+  late MeineListenWidget meineListenWidget;
+  late ProfilWidget profilWidget;
 
   List<Widget> widgets = [];
 
@@ -30,6 +29,13 @@ class _EinkaufsListeScreenState extends State<EinkaufsListeScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    einkaufsListeWidget = GetXEinkaufsListeWidget();
+    getXArtikelListeWidget = GetXArtikelListeWidget();
+    meineListenWidget = MeineListenWidget(
+      callback: changeSelectedWidget,
+    );
+    profilWidget = ProfilWidget();
 
     widgets = [
       //EinkaufsListeWidget(),
@@ -71,9 +77,7 @@ class _EinkaufsListeScreenState extends State<EinkaufsListeScreen> {
         ),
         bottomNavigationBar: BottomNavigationBar(
           onTap: (selected) {
-            setState(() {
-              this.selected = selected;
-            });
+            changeSelectedWidget(selected);
           },
           type: BottomNavigationBarType.fixed,
           selectedItemColor: Colors.white,
@@ -102,5 +106,12 @@ class _EinkaufsListeScreenState extends State<EinkaufsListeScreen> {
         body: widgets[selected],
       ),
     );
+  }
+
+  void changeSelectedWidget(int selected) {
+    print(selected);
+    setState(() {
+      this.selected = selected;
+    });
   }
 }

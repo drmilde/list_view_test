@@ -30,10 +30,10 @@ class HomeScreen extends StatelessWidget {
 
   Widget buildListEinkaufslisteView(BuildContext context) {
     return ListView.builder(
-      itemCount: productController.einkaufsliste.length,
+      itemCount: productController.getSelectedEinkaufsliste().artikel.length,
       itemBuilder: (context, index) {
         return Container(
-          child: Text(productController.einkaufsliste[index].name),
+          child: Text(productController.getSelectedEinkaufsliste().artikel[index].name),
         );
       },
     );

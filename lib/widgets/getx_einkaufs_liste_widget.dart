@@ -27,7 +27,7 @@ class GetXEinkaufsListeWidget extends StatelessWidget {
               child: Column(
                 children: [
                   HeaderWidget(
-                    title: "Aktuelle Liste",
+                    title: productController.getSelectedTitle(),
                     bgindex: 1,
                     colorindex: 1,
                   ),
@@ -59,7 +59,7 @@ class GetXEinkaufsListeWidget extends StatelessWidget {
     );
   }
 
-  Container _buildSlate(BuildContext context) {
+  Widget _buildSlate(BuildContext context) {
     return Container(
       color: productController.config.value.colors[1],
       child: Column(
@@ -103,11 +103,13 @@ class GetXEinkaufsListeWidget extends StatelessWidget {
 
   Widget _buildListView(BuildContext context) {
     return ReorderableListView.builder(
-      itemCount: productController.einkaufsliste.length,
+      itemCount: productController.getSelectedEinkaufsliste().artikel.length,
       itemBuilder: (context, index) {
         return Container(
           key: Key("$index"),
-          child: _buildLine(productController.einkaufsliste[index].name, index),
+          child: _buildLine(
+              productController.getSelectedEinkaufsliste().artikel[index].name,
+              index),
         );
       },
       buildDefaultDragHandles: true,
@@ -125,7 +127,10 @@ class GetXEinkaufsListeWidget extends StatelessWidget {
   }
 
   Widget _buildLine(String text, int index) {
-    bool selected = productController.einkaufsliste[index].imEinkaufswagen;
+    bool selected = productController
+        .getSelectedEinkaufsliste()
+        .artikel[index]
+        .imEinkaufswagen;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 2),
       child: Container(

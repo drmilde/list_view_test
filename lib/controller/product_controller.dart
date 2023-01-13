@@ -5,9 +5,12 @@ import '../einkaufmodel/model_class.dart';
 class ProductController extends GetxController {
   var config = Config().obs;
   var artikelListe = List<Item>.empty().obs;
-  var einkaufsliste = List<Item>.empty().obs;
+
+  //var einkaufsliste = List<Item>.empty().obs;
   var listen = List<Einkaufsliste>.empty().obs;
-  int selectedEinkaufsliste = 0;
+  var selectedEinkaufsliste = 0.obs;
+
+  // Einkauflisten verwalten
 
   void addEinkaufsliste(String name) {
     listen.add(
@@ -15,43 +18,74 @@ class ProductController extends GetxController {
     );
   }
 
-  /*
-  double get summe =>
-      warenkorb.value.fold(0.0, (double? sum, Product p) => sum! + p.price!);
-   */
+  Einkaufsliste getSelectedEinkaufsliste() {
+    return listen[selectedEinkaufsliste.value];
+  }
 
+  String getSelectedTitle() {
+    return listen[selectedEinkaufsliste.value].name;
+  }
+
+  void setSelectedEinkaufsliste(int value) {
+    if ((value >= 0) && (value < listen.length)) {
+      selectedEinkaufsliste.value = value;
+    }
+  }
+
+  void removeEinkaufsliste(String name) {
+    if (listen.length > 1) {
+      // Wenigstens eine Liste muss übrigbleiben
+      for (Einkaufsliste e in listen) {
+        if (e.name == name) {
+          listen.remove(e);
+          return;
+        }
+      }
+    }
+  }
+
+  // Selected List
   void toggleEinkaufsliste(int index) {
-    einkaufsliste[index].toggleEinkaufswagen();
-    einkaufsliste.refresh();
+    getSelectedEinkaufsliste().artikel[index].toggleEinkaufswagen();
+    listen.refresh();
   }
 
   void printEinkaufsliste(int index) {
-    print(einkaufsliste[index].imEinkaufswagen);
+    print(getSelectedEinkaufsliste().artikel[index].imEinkaufswagen);
   }
 
   void addToEinkaufsliste(Item item) {
-    einkaufsliste.add(item);
+    getSelectedEinkaufsliste().artikel.add(item);
+    listen.refresh();
   }
 
   void addEinkauslisteStart(Item item) {
-    einkaufsliste.insert(0, item);
+    getSelectedEinkaufsliste().artikel.insert(0, item);
+    listen.refresh();
   }
 
   void clearEinkaufsliste() {
-    einkaufsliste.clear();
+    getSelectedEinkaufsliste().artikel.clear();
+    listen.refresh();
   }
 
   void removeFromEinkaufsliste(int index) {
-    einkaufsliste.removeAt(index);
+    getSelectedEinkaufsliste().artikel.removeAt(index);
+    listen.refresh();
   }
 
   void removeItemFromEinkaufsliste(String name) {
-    for (Item item in einkaufsliste) {
+    for (Item item in getSelectedEinkaufsliste().artikel) {
       if (item.name == name) {
-        einkaufsliste.remove(item);
+        getSelectedEinkaufsliste().artikel.remove(item);
         return;
       }
     }
+
+    /*
+  double get summe =>
+      warenkorb.value.fold(0.0, (double? sum, Product p) => sum! + p.price!);
+   */
   }
 
   void sortArtikel() {
@@ -64,8 +98,8 @@ class ProductController extends GetxController {
     //fetchProducts();
     //fetchProductsFromAssets();
 
-    einkaufsliste.value = [];
     listen.add(Einkaufsliste(name: "Default"));
+    selectedEinkaufsliste.value = 0;
     _initArtikelListe();
   }
 
